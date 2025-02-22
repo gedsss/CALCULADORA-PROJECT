@@ -1,69 +1,78 @@
-var buttons = document.querySelectorAll('.square');
-var value = null;
-var operation = null;
-var number1 = null;
-var number2 = null;
-var result = document.querySelector('.result');
-var equal = document.querySelector('.equal');
-var clear = document.querySelector('.clear');
-buttons.forEach(function (button) {
-    button.addEventListener('click', function () {
-        var item = button.dataset.item;
-        if (!item)
-            return;
-        if (['+', 'x', '/', '-'].includes(item)) {
-            operation = item;
-        }
-        else {
-            value = item;
-            if (operation === null) {
+const buttons = document.querySelectorAll('.square');
+let value = null;
+let operation = null;
+let number1 = null;
+let number2 = null;
+const result = document.querySelector('.result');
+const equal = document.querySelector('.equal');
+const clear = document.querySelector('.clear');
+let resultN = null
+
+buttons.forEach(button => {
+    button.addEventListener('click', () => {
+        const item = button.dataset.item
+
+        if(item === '+' || item === 'x' || item === '/' || item === '-'){
+            operation = button.dataset.item;
+        } else {
+            value = button.dataset.item;
+            
+            if (operation === null) { 
                 number1 = (number1 === null) ? value : number1 + value;
-            }
-            else {
+            } else {
                 number2 = (number2 === null) ? value : number2 + value;
             }
+            
         }
-        if (result) {
-            result.value = "".concat(number1 || '', " ").concat(operation || '', " ").concat(number2 || '');
-        }
+
+        result.value = `${number1 || ''} ${operation || ''} ${number2 || ''}`;
+
+
     });
-});
-if (equal) {
-    equal.addEventListener('click', function () {
-        if (number1 !== null && number2 !== null && operation !== null) {
-            var resultValue = equations(Number(number1), Number(number2));
-            if (result) {
-                result.value = Number.isInteger(resultValue) ? resultValue.toString() : resultValue.toFixed(3);
-            }
-            number1 = resultValue.toString();
-            number2 = null;
-            operation = null;
-        }
-    });
-}
-if (clear) {
-    clear.addEventListener('click', reset);
-}
-// Functions
+}); 
+
+equal.addEventListener('click', () => {
+    const resultValue = equations(Number(number1), Number(number2));
+    result.value = Number.isInteger(resultValue) ? resultValue : resultValue.toFixed(3);
+    number1 = equations(Number(number1), Number(number2));
+    number2 = null;
+    operation = null;
+
+})
+
+clear.addEventListener('click', reset);
+
+//Functions
 function equations(n1, n2) {
-    switch (operation) {
+    switch(operation){
         case '+':
             return n1 + n2;
+        break;
+
         case '-':
             return n1 - n2;
+        break;
+
         case 'x':
-            return n1 * n2;
+            return n1*n2;
+        break;
+
         case '/':
-            return n2 !== 0 ? n1 / n2 : 0;
-        default:
-            return 0;
+            if(n2 != 0){
+            return n1/n2;
+            } else {
+            warning('ERROR!')
+            }
     }
 }
-function reset() {
+
+function warning(msg){
+    result.value = msg;
+}
+
+function reset(){
+    result.value = ''
     number1 = null;
     number2 = null;
     operation = null;
-    if (result) {
-        result.value = '';
-    }
 }
